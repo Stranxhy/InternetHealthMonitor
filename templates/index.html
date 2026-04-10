@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Health Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app">
+
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Internet Health Monitor</span>
+                    <span class="brand-sub">Monitor de conectividad</span>
+                </div>
+            </div>
+
+            <div class="header-status">
+                <div id="summaryBadge" class="badge neutral">Pendiente</div>
+                <p id="summaryTitle" class="header-status-text">Listo para analizar tu conexión</p>
+            </div>
+
+            <div class="header-actions">
+                <p id="helperText" class="helper-text">Pulsa para comenzar</p>
+                <button id="analyzeBtn" class="primary-button">Iniciar análisis</button>
+            </div>
+        </header>
+
+        <!-- ===== BODY ===== -->
+        <div class="app-body">
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-block">
+                    <p class="sidebar-label">Estado actual</p>
+                    <h3 id="heroStatusTitle">Listo para revisar tu conexión</h3>
+                    <p id="heroStatusText">Cuando inicies el análisis, verás el progreso aquí en tiempo real.</p>
+                </div>
+
+                <div class="sidebar-block">
+                    <p class="sidebar-label">Progreso del análisis</p>
+                    <div class="progress-list">
+                        <div class="progress-item" id="stepNetwork">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <strong>Información de red</strong>
+                                <span>IP local, gateway y subred</span>
+                            </div>
+                            <div class="step-dot"></div>
+                        </div>
+
+                        <div class="progress-item" id="stepInternet">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <strong>Conectividad</strong>
+                                <span>Gateway e internet</span>
+                            </div>
+                            <div class="step-dot"></div>
+                        </div>
+
+                        <div class="progress-item" id="stepDevices">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <strong>Dispositivos</strong>
+                                <span>Equipos en tu red</span>
+                            </div>
+                            <div class="step-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-block sidebar-summary">
+                    <p class="sidebar-label">Resumen</p>
+                    <p id="summaryText">Aquí verás el resultado cuando el análisis termine.</p>
+                </div>
+            </aside>
+
+            <!-- Main content -->
+            <main class="main-content">
+
+                <!-- Welcome state (visible before first analysis) -->
+                <div id="welcomeState" class="welcome-state">
+                    <div class="welcome-inner">
+                        <div class="welcome-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1.5 8.5C5 4.5 8.5 2.5 12 2.5s7 2 10.5 6"/>
+                                <path d="M5 12c1.9-2.3 4.3-3.5 7-3.5s5.1 1.2 7 3.5"/>
+                                <path d="M8.5 15.5c1-1.2 2.2-1.8 3.5-1.8s2.5.6 3.5 1.8"/>
+                                <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h1>Entiende el estado de tu red en segundos</h1>
+                        <p>Ejecuta un análisis guiado para revisar tu red local, la salida a internet y los dispositivos visibles, sin perderte en datos técnicos.</p>
+                        <div class="welcome-features">
+                            <div class="feature">
+                                <span class="feature-dot"></span>
+                                <span>Detecta IPs, gateway y configuración de subred</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-dot"></span>
+                                <span>Mide latencia y pérdida de paquetes en tiempo real</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-dot"></span>
+                                <span>Descubre qué dispositivos son visibles en tu red</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results (shown after analysis starts) -->
+                <section id="results" class="results hidden">
+                    <div class="metrics-grid">
+
+                        <div class="card diagnosis-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Diagnóstico</p>
+                                    <h3>Estado de tu conexión</h3>
+                                </div>
+                            </div>
+                            <p id="diagnosis" class="diagnosis-text">Analizando...</p>
+                        </div>
+
+                        <div class="card metric-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                        <line x1="8" y1="21" x2="16" y2="21"/>
+                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Tu equipo</p>
+                                    <h3>IP local</h3>
+                                </div>
+                            </div>
+                            <p id="localIp" class="metric-value">-</p>
+                        </div>
+
+                        <div class="card metric-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Tu red</p>
+                                    <h3>Gateway</h3>
+                                </div>
+                            </div>
+                            <p id="gateway" class="metric-value">-</p>
+                        </div>
+
+                        <div class="card metric-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Configuración</p>
+                                    <h3>Máscara de subred</h3>
+                                </div>
+                            </div>
+                            <p id="subnetMask" class="metric-value">-</p>
+                        </div>
+
+                        <div class="card status-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Gateway</p>
+                                    <h3>Respuesta local</h3>
+                                </div>
+                            </div>
+                            <p id="gatewayStatus" class="status-pill neutral">Pendiente</p>
+                            <p id="gatewayLatency" class="metric-subtext">Latencia: -</p>
+                        </div>
+
+                        <div class="card status-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Internet</p>
+                                    <h3>Salida a internet</h3>
+                                </div>
+                            </div>
+                            <p id="internetStatus" class="status-pill neutral">Pendiente</p>
+                            <p id="latency" class="metric-subtext">Latencia: -</p>
+                            <p id="packetLoss" class="metric-subtext">Pérdida: -</p>
+                        </div>
+
+                        <div class="card devices-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                        <path d="M16 3H8l-2 4h12l-2-4z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="card-kicker">Red local</p>
+                                    <h3>Dispositivos detectados</h3>
+                                </div>
+                            </div>
+                            <p id="devicesSummary" class="section-note">El escaneo mostrará los equipos visibles en tu red.</p>
+                            <ul id="devices" class="device-list"></ul>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
